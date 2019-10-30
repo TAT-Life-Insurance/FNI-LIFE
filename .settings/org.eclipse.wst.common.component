@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="fnilp">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/resources"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/web"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/WebContent/view/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes/report-template" source-path="/report-template"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/aop"/>
+        <wb-resource deploy-path="/WEB-INF/classes/document-template" source-path="/document-template"/>
+        <property name="java-output-path" value="/fnilp/build/classes"/>
+        <property name="context-root" value="fnilp"/>
+    </wb-module>
+</project-modules>

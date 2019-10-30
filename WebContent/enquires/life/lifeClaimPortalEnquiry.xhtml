@@ -1,0 +1,182 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets" xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" template="/common/commonLayout.xhtml">
+	<ui:param name="leftMenu" value="/common/enquiresLeft.xhtml"/>
+	<ui:param name="rendered" value="true"/>
+	<ui:define name="content">
+		<h:form id="lifeClaimPortalEquiryForm">
+			<table width="100%">
+				<tr>
+					<td>
+						<h:outputText styleClass="ui-widget ui-widget-header ui-corner-all submenu-title" value="Life Claim(Portal) Enquiry"/>
+						<p:separator style="height:3px; margin-top:1px;"/>
+					</td>
+				</tr>
+			</table>
+			<table style="width: 100%;">
+				<tr>
+					<td valign="top">
+						<table>
+							<!--PolicyNo -->
+							<tr style="height: 30px;">
+								<td style="width: 110px;">
+									<h:outputText styleClass="input-label" value="Policy No"/>
+								</td>
+								<td valign="top">
+									<h:panelGrid columns="3" id="policyNoGrid">
+										<p:inputText id="policyNo" readonly="true" required="true" style="width:250px;" value="#{LifeClaimPortalEnquiryActionBean.criteria.policyNo == null ? '' : LifeClaimPortalEnquiryActionBean.criteria.policyNo}">
+										</p:inputText>
+										<p:commandLink actionListener="#{LifeClaimPortalEnquiryActionBean.selectLifePolicyNo()}" id="selectLifePolicyNoDialogLink" immediate="true">
+											<h:graphicImage styleClass="#{ApplicationSetting.searchStyleClass}" url="#{ApplicationSetting.searchIcon}"/>
+											<p:ajax event="dialogReturn" listener="#{LifeClaimPortalEnquiryActionBean.returnLifePolicyNo}" update="policyNoGrid"/>
+										</p:commandLink>
+										<p:commandLink action="#{LifeClaimPortalEnquiryActionBean.reset()}" update="lifeClaimPortalEquiryForm :selectLifePolicyNoForm">
+											<p:graphicImage styleClass="#{ApplicationSetting.deleteStyleClass}" value="#{ApplicationSetting.deleteIcon}"/>
+										</p:commandLink>
+									</h:panelGrid>
+								</td>
+							</tr>
+							<!-- Claim Role -->
+							<tr style="height: 30px;">
+								<td style="width: 110px;">
+									<h:outputText styleClass="input-label" value="Claim Role"/>
+								</td>
+								<td>
+									<p:selectOneMenu converter="omnifaces.SelectItemsIndexConverter" style="width:260px;" value="#{LifeClaimPortalEnquiryActionBean.criteria.claimRole}">
+										<f:selectItem itemLabel="Select One" itemValue=""/>
+										<f:selectItem itemLabel="Disability" itemValue="DISABILITY"/>
+										<f:selectItem itemLabel="Death" itemValue="DEATH"/>
+									</p:selectOneMenu>
+								</td>
+							</tr>
+							<!-- Claim Date -->
+							<tr style="height: 30px;">
+								<td style="width: 110px;">
+									<h:outputText styleClass="input-label" value="Claim Date"/>
+								</td>
+								<td>
+									<p:calendar id="claimDate" pattern="#{ApplicationSetting.dateFormat}" readonlyInput="true" showOn="button" size="41" timeZone="#{ApplicationSetting.timeZone}" value="#{LifeClaimPortalEnquiryActionBean.criteria.claimDate}"/>
+								</td>
+							</tr>
+							<!-- Submitted Date -->
+							<tr style="height: 30px;">
+								<td style="width: 110px;">
+									<h:outputText styleClass="input-label" value="Submitted Date"/>
+								</td>
+								<td>
+									<p:calendar id="submittedDate" pattern="#{ApplicationSetting.dateFormat}" readonlyInput="true" showOn="button" size="41" timeZone="#{ApplicationSetting.timeZone}" value="#{LifeClaimPortalEnquiryActionBean.criteria.submittedDate}"/>
+								</td>
+							</tr>
+							<tr style="height: 30px;">
+								<td style="width: 110px;">
+									<h:outputText value=""/>
+								</td>
+								<td>
+									<p:commandButton action="#{LifeClaimPortalEnquiryActionBean.search()}" id="searchBtn" update=":lifeClaimPortalEquiryForm" value="Search"/>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<p:dataTable id="lifeClaimTable" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowIndexVar="lifeClaimIndex" rowKey="index" rows="10" rowsPerPageTemplate="5,10, 15" style="width:100%;" value="#{LifeClaimPortalEnquiryActionBean.lifeClaimList}" var="lifeClaim">
+							<p:column headerText="Portal Request Id" style="width:200px;">
+								<h:outputText value="Portal Request #{lifeClaimIndex + 1}"/>
+							</p:column>
+							<p:column headerText="Policy No">
+								<h:outputText value="#{lifeClaim.policyNo}"/>
+							</p:column>
+							<p:column headerText="Claim Role">
+								<h:outputText value="#{lifeClaim.claimRole}"/>
+							</p:column>
+							<p:column headerText="Insured Person">
+								<h:outputText value="#{lifeClaim.insuredPerson}"/>
+							</p:column>
+							<p:column headerText="Total Sum Insured" style="width:100px;">
+								<h:outputText value="#{lifeClaim.sumInsured}">
+									<f:convertNumber pattern="#{ApplicationSetting.currencyFormat}"/>
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Submitted Date">
+								<h:outputText pattern="#{ApplicationSetting.dateFormat}" value="#{lifeClaim.submittedDate}"/>
+							</p:column>
+							<p:column style="width:40px;">
+								<p:commandLink action="#{LifeClaimPortalEnquiryActionBean.editLifeClaim(lifeClaim)}" update=":informationForm">
+									<p:graphicImage styleClass="command-image" value="/images/approval.png"/>
+								</p:commandLink>
+							</p:column>
+						</p:dataTable>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<p:commandButton action="dashboard" id="cancelBtn" immediate="true" value="Cancel"/>
+					</td>
+				</tr>
+			</table>
+		</h:form>
+		<h:form id="selectLifePolicyNoForm">
+			<p:dialog header="Life Policy" height="300" hideEffect="explode" id="selectLifePolicyNoDialog" resizable="false" showEffect="explode" widgetVar="selectLifePolicyNoDialog" width="700">
+				<table>
+					<tr>
+						<td>
+							<p:message for="selectLifePolicyCriteria"/>
+						</td>
+						<td>
+							<p:selectOneMenu id="selectLifePolicyCriteria" value="#{LifeClaimPortalEnquiryActionBean.lifePolicyCriteria.lifePolicyCriteriaItems}">
+								<f:selectItem itemLabel="Select Criteria"/>
+								<f:selectItems value="#{LifeClaimPortalEnquiryActionBean.lifePolicyCriteriaList}" var="criteriaItem"/>
+							</p:selectOneMenu>
+						</td>
+						<td>
+							<p:inputText id="policyCriteria" required="true" style="height:20px;width: 200px;" value="#{LifeClaimPortalEnquiryActionBean.lifePolicyCriteria.criteriaValue}"/>
+						</td>
+						<td>
+							<p:commandButton action="#{LifeClaimPortalEnquiryActionBean.searchPolicyCriteria()}" id="searchPolicyBtn" update=":selectLifePolicyNoForm:selectPolicyPanel" value="Search"/>
+						</td>
+						<td>
+							<p:commandButton action="#{LifeClaimPortalEnquiryActionBean.resetPolicyCriteria()}" id="resetCustomerButtonBtn" update=":selectLifePolicyNoForm:selectPolicyPanel :selectLifePolicyNoForm:selectLifePolicyCriteria :selectLifePolicyNoForm:policyCriteria" value="Reset"/>
+						</td>
+						<td>
+							<h:outputText value=""/>
+						</td>
+						<td>
+							<p:message for="policyCriteria"/>
+						</td>
+					</tr>
+				</table>   
+		        <h:panelGroup id="selectPolicyPanel">  
+					<p:dataTable id="customerTable" paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowKey="index" rows="10" rowsPerPageTemplate="5,10, 15" style="width:100%;" value="#{LifeClaimPortalEnquiryActionBean.policySearchList}" var="lifePolicy">
+						<p:column headerText="CustomerName">  
+		                    <h:outputText value="#{lifePolicy.customerName}"/>  
+		                </p:column>  
+		                <p:column headerText="Policy No">  
+		                    <h:outputText value="#{lifePolicy.policyNo}"/>  
+		                </p:column>
+		                 <p:column headerText="Branch">  
+		                    <h:outputText value="#{lifePolicy.branch.name}"/>  
+		                </p:column>
+		                <p:column style="width:30px;text-align: center;">  
+		                	<p:commandButton action="#{LifeClaimPortalEnquiryActionBean.changePolicyNoValue(lifePolicy)}" id="selectPolicyLink" oncomplete="PF('selectLifePolicyNoDialog').hide();" update=":lifeClaimPortalEquiryForm" styleClass="green-button" icon="fa fa-check" immediate="true" />
+		                </p:column>  
+		            </p:dataTable>
+		        </h:panelGroup>  
+			</p:dialog>
+		</h:form>
+		<h:form id="informationForm">
+			<p:dialog header="Proposal Information" height="100" hideEffect="explode" id="informationDialog" resizable="false" showEffect="explode" widgetVar="informationDialog" width="350">
+				<h:panelGroup id="informationPanel">
+					<table>
+						<tr>
+							<td align="left">
+								<h:graphicImage style="width:30px;height:30px;" url="/images/warning.png"/>
+							</td>
+							<td valign="middle">
+								<h:outputText style="padding-top:-10px;text-decoration: none;font-size: 12px;" value="#{LifeClaimPortalEnquiryActionBean.message}"/>
+							</td>
+						</tr>
+					</table>
+				</h:panelGroup>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+</ui:composition>
